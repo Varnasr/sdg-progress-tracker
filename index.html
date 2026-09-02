@@ -13,13 +13,13 @@
   gtag('config', 'G-JRCMEB9TBW', { anonymize_ip: true });
 </script>
 
-<meta name="description" content="India SDG Progress Tracker — scores, trends, and category breakdowns across all 17 UN Sustainable Development Goals. An ImpactMojo project.">
-<meta property="og:title" content="SDG Progress Tracker — India | ImpactMojo">
-<meta property="og:description" content="India's progress on the 17 UN Sustainable Development Goals — index scores, year-on-year trend, status by category, and goal-level rankings.">
+<meta name="description" content="India SDG Progress Tracker, scores, trends, and category breakdowns across all 17 UN Sustainable Development Goals. An ImpactMojo project.">
+<meta property="og:title" content="SDG Progress Tracker: India | ImpactMojo">
+<meta property="og:description" content="India's progress on the 17 UN Sustainable Development Goals, index scores, year-on-year trend, status by category, and goal-level rankings.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sdgtracker.impactmojo.in/">
 
-<title>SDG Progress Tracker — India | ImpactMojo</title>
+<title>SDG Progress Tracker: India | ImpactMojo</title>
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230EA5E9'/><text x='16' y='22' text-anchor='middle' font-family='Inter,sans-serif' font-size='18' font-weight='700' fill='%23ffffff'>S</text></svg>">
 <meta name="theme-color" content="#0EA5E9">
@@ -235,7 +235,7 @@ This dashboard renders interactive charts with JavaScript. Please enable JavaScr
 
 <section class="hero">
     <h1>India <span>SDG Progress</span></h1>
-    <p>India's progress on the 17 UN Sustainable Development Goals — index scores, year-on-year trend, and how each category flows into on-track / stagnating / off-track outcomes.</p>
+    <p>India's progress on the 17 UN Sustainable Development Goals, index scores, year-on-year trend, and how each category flows into on-track / stagnating / off-track outcomes.</p>
     <div class="badge"><iconify-icon icon="mdi:target"></iconify-icon> NITI Aayog SDG India Index · 2024</div>
 </section>
 
@@ -244,7 +244,7 @@ This dashboard renders interactive charts with JavaScript. Please enable JavaScr
 <div class="section-title"><iconify-icon icon="mdi:view-dashboard-outline"></iconify-icon>Headline</div>
 <div class="kpi-grid" id="kpiGrid"></div>
 
-<div class="section-title"><iconify-icon icon="mdi:numeric-1-circle-outline"></iconify-icon>17 Goals — Score &amp; Status</div>
+<div class="section-title"><iconify-icon icon="mdi:numeric-1-circle-outline"></iconify-icon>17 Goals: Score &amp; Status</div>
 <div class="sdg-grid" id="sdgGrid"></div>
 
 <div class="section-title"><iconify-icon icon="mdi:source-branch"></iconify-icon>Category &rarr; Status Flow<small>How the 17 goals map across People / Prosperity / Planet / Peace / Partnership and where each lands</small></div>
@@ -403,7 +403,7 @@ function makeSankey() {
     destroyChart('chartSankey');
 
     // Build flows: each category -> status, value = sum of (100 - score) is too abstract.
-    // Use COUNT of goals per (category, status) — concrete and intuitive.
+    // Use COUNT of goals per (category, status), concrete and intuitive.
     const flows = [];
     categories.forEach(cat => {
         const statusCounts = { 'on-track': 0, 'stagnating': 0, 'off-track': 0 };
@@ -488,7 +488,7 @@ function renderInsights() {
     const total = yearlyIndex[yearlyIndex.length - 1].score;
     const start = yearlyIndex[0];
     const end = yearlyIndex[yearlyIndex.length - 1];
-    out.push(`<strong>India's SDG Index</strong> rose from ${start.score} (${start.year}) to ${end.score} (${end.year}) — an absolute gain of ${(end.score - start.score).toFixed(1)} points across ${yearlyIndex.length} editions of NITI Aayog measurement.`);
+    out.push(`<strong>India's SDG Index</strong> rose from ${start.score} (${start.year}) to ${end.score} (${end.year}): an absolute gain of ${(end.score - start.score).toFixed(1)} points across ${yearlyIndex.length} editions of NITI Aayog measurement.`);
 
     const top = [...sdgData].sort((a, b) => b.score - a.score).slice(0, 3);
     out.push(`<strong>Strongest goals:</strong> ${top.map(g => `Goal ${g.num} (${g.name.replace(/&amp;/g,'&')}, ${g.score})`).join(', ')}. Energy access, sanitation and climate-action investments anchor the top of the table.`);
@@ -497,7 +497,7 @@ function renderInsights() {
     out.push(`<strong>Weakest goals:</strong> ${bottom.map(g => `Goal ${g.num} (${g.name.replace(/&amp;/g,'&')}, ${g.score})`).join(', ')}. Gender, hunger and partnerships remain India's most stubborn under-performers.`);
 
     const peopleOff = categories.find(c => c.name === 'People').goals.filter(n => sdgData[n - 1].status === 'off-track').length;
-    if (peopleOff >= 2) out.push(`<strong>People-cluster lag:</strong> ${peopleOff} of 5 goals in the People cluster (hunger, gender) are off-track — the social-sector gap remains a persistent drag on India's SDG performance.`);
+    if (peopleOff >= 2) out.push(`<strong>People-cluster lag:</strong> ${peopleOff} of 5 goals in the People cluster (hunger, gender) are off-track, the social-sector gap remains a persistent drag on India's SDG performance.`);
 
     document.getElementById('insightsGrid').innerHTML = out.map(t => `<div class="insight">${t}</div>`).join('');
 }
