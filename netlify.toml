@@ -1,5 +1,18 @@
-# Static site: no build step. The headers below are the ones this site served
-# while it was deployed from the Experiments repository, carried over unchanged.
+# Static site: no build step.
+#
+# The Content-Security-Policy below is kept identical to the <meta
+# http-equiv="Content-Security-Policy"> in index.html, plus three directives a
+# meta tag has no reason to carry (object-src, worker-src, media-src).
+#
+# It used to be the Experiments repository's policy, carried over verbatim when
+# this site was split out. Experiments hosts many tools, so that policy allowed
+# ten origins this site never touches, among them unpkg, cdnjs, openlibrary.org,
+# the open-meteo endpoints and api.dhsprogram.com. Nothing broke, because a
+# browser enforces the intersection of the two policies and the meta tag is
+# tighter. The risk was the other way round: delete the meta tag believing the
+# header covered it, and the policy silently widens.
+#
+# scripts/check.py fails if the two drift apart again.
 [build]
   publish = "."
 
@@ -9,4 +22,4 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://code.iconify.design https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://covers.openlibrary.org https://cdn.jsdelivr.net https://www.google-analytics.com https://*.basemaps.cartocdn.com https://licensebuttons.net; connect-src 'self' https://openlibrary.org https://api.worldbank.org https://api.dhsprogram.com https://api.open-meteo.com https://archive-api.open-meteo.com https://air-quality-api.open-meteo.com https://api.climatetrace.org https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://tessdata.projectnaptha.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; worker-src 'self' blob:; media-src 'self' blob: data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://code.iconify.design https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com; connect-src 'self' https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; worker-src 'self' blob:; media-src 'self' blob: data:"
