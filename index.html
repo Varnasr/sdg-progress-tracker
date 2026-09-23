@@ -41,12 +41,16 @@
     --grid: rgba(148,163,184,0.12);
     --text: #e4e4ec;
     --text-dim: #9898a8;
-    --text-muted: #5c5c6e;
+    --text-muted: #9296a8;   /* was #5c5c6e, 2.32:1 on the dark surfaces */
     --accent: #0EA5E9;
     --accent-2: #6366F1;
     --accent-green: #10B981;
     --accent-amber: #F59E0B;
-    --accent-red: #EF4444;
+    --accent-red: #F87171;    /* was #EF4444, 4.04:1 */
+    --accent-red-fill: #B02020;  /* a fill that carries white ink; it does
+                                    not flip with the theme, because ink on a
+                                    dark card and a fill under white ink want
+                                    opposite ends of the same scale */
     --accent-pink: #EC4899;
     --accent-purple: #A78BFA;
     --header-bg: rgba(15, 23, 42, 0.95);
@@ -63,9 +67,14 @@
     --bg: #f8fafc; --surface: #ffffff; --surface-2: #f1f5f9;
     --border: rgba(15,23,42,.10); --grid: rgba(100,116,139,0.18);
     --text: #0f172a; --text-dim: #475569; --text-muted: #64748b;
-    --accent: #0284c7; --accent-2: #4f46e5;
-    --accent-green: #059669; --accent-amber: #d97706;
-    --accent-red: #dc2626; --accent-pink: #db2777; --accent-purple: #7c3aed;
+    /* Second token block, declared after the first and therefore the one that
+       wins. These are the status inks used on a tint of themselves -- the ink
+       of every status pill and delta figure -- and measured on those tints
+       they ran 2.63 to 3.91:1. Darkened to clear AA; the first block above is
+       dead weight either way. */
+    --accent: #075985; --accent-2: #4338CA;
+    --accent-green: #036B4E; --accent-amber: #8F4A06;
+    --accent-red: #B02020; --accent-pink: #A3175C; --accent-purple: #6D28D9;
     --header-bg: rgba(255, 255, 255, 0.92);
     --hero-grad: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 100%);
     --shadow: 0 4px 12px rgba(15,23,42,.08);
@@ -129,7 +138,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
 .sdg-tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem 0.95rem; display: flex; flex-direction: column; gap: 0.4rem; position: relative; overflow: hidden; transition: transform 0.15s, border-color 0.15s; }
 .sdg-tile:hover { transform: translateY(-2px); border-color: var(--goal-color); }
 .sdg-tile-head { display: flex; align-items: center; gap: 0.5rem; }
-.sdg-num { width: 32px; height: 32px; border-radius: 6px; background: var(--goal-color); color: white; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+.sdg-num { width: 32px; height: 32px; border-radius: 6px; background: var(--goal-color); color: var(--goal-ink, white); display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
 .sdg-name { font-family: var(--font-heading); font-size: 0.82rem; font-weight: 600; color: var(--text); line-height: 1.2; }
 .sdg-bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; margin-top: 0.15rem; }
 .sdg-fill { height: 100%; background: var(--goal-color); border-radius: 3px; transition: width 0.6s ease; }
@@ -176,7 +185,21 @@ main { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .sdg-grid { grid-template-columns: repeat(2, 1fr); }
     .insights { grid-template-columns: 1fr; }
-    .nav-actions .btn-ghost span { display: none; }
+    /* `display: none` takes the label out of the accessibility tree as well
+       as off the screen, so below 600px this link and this button became
+       icon-only controls with no accessible name at all. Hide it visually and
+       keep it announced. */
+    .nav-actions .btn-ghost span,
+    .nav-actions .btn-icon span {
+        position: absolute;
+        width: 1px; height: 1px;
+        padding: 0; margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+    }
 }
 
 @media print {
@@ -186,6 +209,13 @@ main { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
     .hero { background: white !important; padding: 1rem 0 !important; }
     .hero h1, .hero h1 span, .badge, .kpi-value, .insight strong, .section-title, .chart-card h3, .sdg-name, .sdg-score { color: black !important; }
     .badge { background: white !important; border-color: #ccc !important; }
+}
+
+/* A link inside a source line, distinguished from the sentence around it by
+   colour alone: 1.1:1 against its own text. */
+.source a, .src a, footer a, .footnote a, .meta a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 </style>
 </head>
@@ -340,10 +370,28 @@ const chartRegistry = {};
 function readVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 
 // ─── SDG Grid render ─────────────────────────────────────────
-function renderSDGGrid() {
+// The seventeen goal colours are the UN's official palette and are not
+    // ours to change. The ink on them is: white clears AA on the darker goals
+    // and fails badly on the yellows and oranges (SDG 2's #FCC30B is 1.62:1
+    // under white and 11.64 under near-black). Chosen per colour by measuring
+    // both, rather than by a luminance cutoff, because a cutoff is what put
+    // white on #FD9D24 at 2.09 in the first place.
+    function goalInk(hex) {
+        var h = hex.replace('#', '');
+        var ch = [0, 2, 4].map(function (i) {
+            var v = parseInt(h.substr(i, 2), 16) / 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        var L = 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+        var onWhite = 1.05 / (L + 0.05);
+        var onBlack = (L + 0.05) / 0.0947;
+        return onWhite >= onBlack ? '#ffffff' : '#111111';
+    }
+
+    function renderSDGGrid() {
     const grid = document.getElementById('sdgGrid');
     grid.innerHTML = sdgData.map(g => `
-        <div class="sdg-tile" style="--goal-color:${g.color}">
+        <div class="sdg-tile" style="--goal-color:${g.color};--goal-ink:${goalInk(g.color)}">
             <div class="sdg-tile-head">
                 <div class="sdg-num">${g.num}</div>
                 <div class="sdg-name">${g.name}</div>
