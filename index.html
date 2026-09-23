@@ -185,7 +185,21 @@ main { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .sdg-grid { grid-template-columns: repeat(2, 1fr); }
     .insights { grid-template-columns: 1fr; }
-    .nav-actions .btn-ghost span { display: none; }
+    /* `display: none` takes the label out of the accessibility tree as well
+       as off the screen, so below 600px this link and this button became
+       icon-only controls with no accessible name at all. Hide it visually and
+       keep it announced. */
+    .nav-actions .btn-ghost span,
+    .nav-actions .btn-icon span {
+        position: absolute;
+        width: 1px; height: 1px;
+        padding: 0; margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+    }
 }
 
 @media print {
