@@ -1,5 +1,7 @@
 # SDG Progress Tracker: India
 
+Shared engineering standard: @.claude/engineering-standards.md. It applies to all work in this repository. This file adds what is specific to the project, and wins where the two disagree.
+
 India's SDG indicator progress, from data held inline in the page. Single page, no build step, deployed on Netlify.
 
 ## Commands
