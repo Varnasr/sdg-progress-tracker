@@ -28,9 +28,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amaranth:wght@400;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-sankey@0.12.1/dist/chartjs-chart-sankey.min.js"></script>
-<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-sankey@0.12.1/dist/chartjs-chart-sankey.min.js" defer></script>
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js" defer></script>
 
 <style>
 :root, [data-theme="dark"] {
@@ -641,7 +641,9 @@ function init() {
 
     renderAll();
 }
-init();
+// The CDN scripts above are deferred so they do not block first paint; deferred
+// scripts run before DOMContentLoaded, so Chart is defined by the time init runs.
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
